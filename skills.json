@@ -1,0 +1,16 @@
+{
+  "_doc": "Which role uses which skill and which account. tools/check.py reads this. skills: role -> skill folders under skills/<role>/ ('bot-guards' means guards/). accounts: name a role charter uses -> path in the pack that serves it (or null), and key names (SIGNIN for a sign-in Jesse does through Connect apps or the bot's browser).",
+  "skills": {
+    "lead": ["bot-guards", "approval-queue", "reply-sort", "evening-wrap", "scoreboard"],
+    "radar": ["bot-guards", "radar-sweep"],
+    "dream100": ["bot-guards", "partner-score", "dream-100-draft"],
+    "dream500": ["bot-guards", "segment-wave"],
+    "trades": ["bot-guards", "trades-wave", "referral-campaign"]
+  },
+  "accounts": {
+    "Microsoft 365 (Outlook)": {"path": null, "keys": ["SIGNIN"]},
+    "Slack": {"path": null, "keys": ["SIGNIN"]},
+    "Facebook": {"path": "kit/radar/groups.md", "keys": ["SIGNIN"]},
+    "Verifalia": {"path": null, "keys": ["VERIFALIA_USERNAME", "VERIFALIA_PASSWORD"]}
+  }
+}
