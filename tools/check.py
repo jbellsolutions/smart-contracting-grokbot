@@ -20,7 +20,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(ROOT)
 ROUTINE_CAP = 50
 
-SECRET = re.compile(r"(sk-(?:ant-|or-|proj-)?[A-Za-z0-9_-]{20,}|xox[abprs]-[A-Za-z0-9-]{10,}|ghp_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,}|AKIA[0-9A-Z]{16}|pit-[0-9a-f-]{30,}|eyJ[A-Za-z0-9_-]{30,}\.[A-Za-z0-9_-]{20,}|-----BEGIN [A-Z ]*PRIVATE KEY-----\s*[A-Za-z0-9+/=]{40})")
+SECRET = re.compile(r"(agt_[A-Za-z0-9_-]{20,}|sk-(?:ant-|or-|proj-)?[A-Za-z0-9_-]{20,}|xox[abprs]-[A-Za-z0-9-]{10,}|ghp_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,}|AKIA[0-9A-Z]{16}|pit-[0-9a-f-]{30,}|eyJ[A-Za-z0-9_-]{30,}\.[A-Za-z0-9_-]{20,}|-----BEGIN [A-Z ]*PRIVATE KEY-----\s*[A-Za-z0-9+/=]{40})")
 ASSIGN = re.compile(r"""(?i)\b[A-Z0-9_]*(?:API_KEY|TOKEN|SECRET|PASSWORD)\s*[=:]\s*["']?([A-Za-z0-9_\-]{24,})""")
 PLACEHOLDER = re.compile(r"\{\{[a-z_]+\}\}|FILL:")
 ADAPT = {"Hermes command": re.compile(r"\bhermes (?:-p|chat|kanban|cron)|kanban_create|\bHERMES_"),

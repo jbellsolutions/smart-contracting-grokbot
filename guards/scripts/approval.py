@@ -22,7 +22,10 @@ The gate is clear only if: no context/STOP; the routine (if named) is `on`, not 
 "live_sends": true; the id doesn't start with test-; a decision says yes and its hash equals the hash recomputed now;
 this item (or this row of a wave) isn't already in state/sent.csv; fewer than DAILY_CAP sends today; and the last send
 was at least GAP_SECONDS ago. For a wave (TO: <list file> sha256=<sum>), the list file's sha256 recomputed now must
-equal the approved one, and --row must be a recipient in that file: a rebuilt or edited list needs a new yes."""
+equal the approved one, and --row must be a recipient in that file: a rebuilt or edited list needs a new yes.
+
+Every yes and every sent, skipped or failed outcome is also written to the conversation log (repo/convlog/convlog.py),
+so the day's file for the back office is complete without any role having to remember it."""
 import sys, re, os, json, hashlib, datetime, time
 os.environ["TZ"] = "Pacific/Auckland"; time.tzset()  # the daily cap resets at NZ midnight, whatever the box clock
 from _ws import p, stopped
@@ -44,6 +47,26 @@ def sent_rows():
     if not f.exists(): return []
     return [l.split(",") for l in f.read_text().splitlines() if l.strip()]
 
+def convlog(status, payload, role, iid, row=""):
+    """Write the message to the conversation log (repo/convlog/convlog.py). Never blocks or fails a gate."""
+    try:
+        import subprocess, tempfile
+        m = re.search(r"^TEXT:\n(.*)", payload, re.S | re.M)
+        to = re.search(r"^TO:\s*(.+)$", payload, re.M)
+        sub = re.search(r"^SUBJECT:\s*(.+)$", payload, re.M)
+        wave = bool(to and "sha256=" in to.group(1))
+        person = row or (f"wave-{iid}" if wave else to.group(1).split(",")[0].strip() if to else "unknown")
+        tool = __import__("pathlib").Path(__file__).resolve().parents[2] / "convlog" / "convlog.py"
+        if not tool.exists(): return
+        with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as f: f.write(m.group(1) if m else payload)
+        subprocess.run([sys.executable, str(tool), "add", "--agent", role, "--channel", "email", "--direction", "out", "--status", status,
+                        "--person", person, "--text-file", f.name, "--approval", iid, "--subject", sub.group(1) if sub else ""]
+                       + (["--test"] if iid.startswith("test-") else []),
+                       capture_output=True, timeout=30, env={**os.environ, "BOT_HOME": str(p()), "CAMPAIGN": "smart-contracting", "CONVLOG_TZ": "Pacific/Auckland"})
+        os.unlink(f.name)
+    except Exception:
+        pass
+
 def arg(a, k):
     return a[a.index(k) + 1] if k in a and a.index(k) + 1 < len(a) else None
 
@@ -60,6 +83,7 @@ def main(a):
         dec.parent.mkdir(parents=True, exist_ok=True)
         now = datetime.datetime.now().isoformat(timespec="seconds")
         dec.write_text(f"ITEM: {iid}\nROLE: {role}\nHASH: {h}\nSHOWN: {now}\nANSWER: {a[2]}\nJESSE: {a[3]}\n")
+        if a[2] == "yes": convlog("approved", payload, role, iid)
         print(f"recorded {a[2]} for {iid}"); return 0
     row = arg(a, "--row") or ""
     key = f"{iid}|{row}"
@@ -67,6 +91,7 @@ def main(a):
         if len(a) < 3: print(__doc__); return 2
         f = p("state", "sent.csv"); f.parent.mkdir(parents=True, exist_ok=True)
         with f.open("a") as w: w.write(f"{int(time.time())},{key.replace(',', ' ')},{a[2]}\n")
+        if a[2] in ("sent", "skipped", "failed"): convlog(a[2], payload, role, iid, row)
         print("recorded"); return 0
     if cmd != "gate": print(__doc__); return 2
     def held(why): print(f"held: {why}"); return 1

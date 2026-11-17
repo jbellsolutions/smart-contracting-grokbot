@@ -1,1 +1,8 @@
-{"run": "jesse", "live_sends": false, "capacity": "normal", "fee_gst_basis": "unset", "daily_send_cap": 25}
+{
+  "run": "jesse",
+  "live_sends": false,
+  "capacity": "normal",
+  "fee_gst_basis": "unset",
+  "daily_send_cap": 25,
+  "timezone": "Pacific/Auckland"
+}

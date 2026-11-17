@@ -27,6 +27,8 @@ The partner offer, in Jesse's words: **5% of the job value, paid once the custom
 
 ## What's inside
 
+New in v1.1.0: the conversation log (`convlog/`). Every message the bot drafts, sends or receives is written down once, and the evening wrap carries the day's file. A bot that already holds v1.0.0: [UPGRADE.md](UPGRADE.md).
+
 | Path | What |
 |---|---|
 | [HANDOFF.md](HANDOFF.md) | The install: Jesse's steps, then the bot's, the bring-up order and the test day |

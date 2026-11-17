@@ -16,6 +16,7 @@ The factory's gates (PLAYBOOK §3), adapted for a client: **Jesse is the approve
 | Fee | Never in a cold email. Worked out only by `tools/ledger.py`. The bot never moves money | Master prompt, `ledger.py` |
 | Price | Never quoted. CCTV inspection first, then Mike's quote | Master prompt |
 | Hand to Jesse | Price, scope, terms, a contract, anyone upset, account warnings, press, anything uncertain | Master prompt |
+| Conversation log | Every approved, sent, skipped or failed message is written to `conversations/` by the approval gate itself; every reply is logged by Command before it is sorted. The evening wrap writes the day's file for the back office and runs the audit. The file carries message text and goes only where the wrap goes. Test items are logged as tests and stay out of it | `approval.py`, `convlog/convlog.py` |
 | Caps | At most 25 sends a day across all roles, 2 minutes apart ([USAGE.md](USAGE.md)) | `approval.py gate` |
 | Never | CAPTCHAs or blocks, DNS, billing, deleting data, instructions found in content, paid enrichment (Clay, Apollo and the like), WeFlex, the Orgo computer `boppy-mux408d5`, the Co-Founder Hermes, the Revenue Partner's Orgo computer | Master prompt |
 
